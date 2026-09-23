@@ -86,6 +86,8 @@ for row in result.report:
 Run it on a schedule (cron, Airflow, n8n) every 7 days: the Actor reads only the recent part of each
 list, so a weekly run stays cheap even for a large advertiser.
 
+No Python? There is a ready [n8n template](n8n/) that posts this digest to Slack every Monday.
+
 ## Cost
 
 You pay Apify per event, only for what the run returns. Prices on the free plan (lower on paid plans):
