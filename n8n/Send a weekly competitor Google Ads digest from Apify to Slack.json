@@ -1,20 +1,69 @@
 {
-  "name": "Send a weekly digest of competitors' Google Ads to Slack",
+  "name": "Send a weekly competitor Google Ads digest from Apify to Slack",
   "nodes": [
     {
       "parameters": {
-        "content": "## Weekly Google Ads competitor digest\n\nEvery Monday this workflow reads your competitors' ads from the Google Ads Transparency Center and posts a digest to Slack: ads running now, new and stopped ads for the week, and examples of the new ones.\n\n### Setup (5 minutes)\n1. Create an Apify account and copy your API token (Console > Settings > Integrations).\n2. Create a **Header Auth** credential: name `Authorization`, value `Bearer YOUR_TOKEN`. Select it in both HTTP Request nodes.\n3. In **Settings**, list competitor domains (comma separated), optionally a two-letter country.\n4. Connect Slack and pick a channel in the last node.\n\n### Cost\nPay per result on Apify: about $0.0005 per ad row plus $0.0035 per run on the free plan. A weekly run on 3 competitors usually costs cents. Ad text is off by default to keep it cheap; turn on **fetchAdText** in Settings to get headlines (text for the 20 most recent ads per competitor, up to about $0.004 per ad).\n\nActor: https://apify.com/firsthand/google-ads-transparency-report",
-        "height": 560,
-        "width": 460
+        "content": "## Weekly competitor Google Ads digest\n\nEvery Monday, get one Slack message that tells you what your competitors changed in their Google Ads: how many ads each one runs, which ads are new this week, which were stopped, and examples of the new ones. Built for PPC managers, marketing teams and agencies who watch a set of competitors and don't want to check the Google Ads Transparency Center by hand.\n\n### How it works\n1. A schedule (Monday 8:00) or a manual run starts the workflow.\n2. **Settings** holds your competitor domains, an optional country and the report period.\n3. An HTTP Request runs the Google Ads Transparency Report Actor on Apify. It reads each competitor's ads from the Google Ads Transparency Center and builds a new / stopped / running report.\n4. A second HTTP Request fetches that report, and a Code node turns it into one digest per competitor.\n5. The digest is posted to a Slack channel.\n\n### Setup (about 5 minutes)\n1. Create an Apify account and copy your API token (Console > Settings > Integrations).\n2. Add a **Header Auth** credential: name `Authorization`, value `Bearer <your token>`. Select it in both HTTP Request nodes.\n3. List your competitors in **Settings**.\n4. Connect Slack and choose a channel.\n\n### Requirements\nAn Apify account (pay per result: about $0.0005 per ad plus $0.0035 per run on the free plan, so a weekly run on three competitors costs a few cents) and Slack.\n\n### Customization\nTurn on `fetchAdText` for headlines of new ads (up to about $0.004 per ad), change `reportDays`, or replace Slack with Gmail, Telegram or Google Sheets: the digest is in `{{ $json.text }}`.\n\nActor: https://apify.com/firsthand/google-ads-transparency-report",
+        "height": 900,
+        "width": 560,
+        "color": 1
       },
-      "name": "Setup notes",
+      "name": "Overview",
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -520,
-        -300
+        -680,
+        -360
       ],
-      "id": "f17081e9-8c51-4ca2-b72b-a4ff85664969"
+      "id": "ac6d3fff-2c49-489b-9d37-09a5ff8a7f79"
+    },
+    {
+      "parameters": {
+        "content": "## 1. When and what to watch\nWeekly schedule or a manual run; your competitors in Settings.",
+        "height": 460,
+        "width": 420,
+        "color": 7
+      },
+      "name": "Section: when and what",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -140
+      ],
+      "id": "7592769a-d0d7-44c1-a0f6-33c4afacb3fc"
+    },
+    {
+      "parameters": {
+        "content": "## 2. Read competitors' ads\nRun the Apify Actor, then fetch its weekly report.",
+        "height": 460,
+        "width": 460,
+        "color": 7
+      },
+      "name": "Section: read ads",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -140
+      ],
+      "id": "073cbc84-d165-47b4-83b1-022212a587ba"
+    },
+    {
+      "parameters": {
+        "content": "## 3. Build and send the digest\nOne Slack message, one line per competitor.",
+        "height": 460,
+        "width": 460,
+        "color": 7
+      },
+      "name": "Section: digest",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -140
+      ],
+      "id": "278fea97-6223-423e-b208-c9336c4e500b"
     },
     {
       "parameters": {
@@ -37,7 +86,7 @@
         0,
         0
       ],
-      "id": "b52def16-0b66-4881-9891-bea2bcb94446"
+      "id": "4f05820a-d49f-4c17-988f-1500bd766580"
     },
     {
       "parameters": {},
@@ -48,7 +97,7 @@
         0,
         200
       ],
-      "id": "2ccaaf05-5b47-4ec7-804b-a17210f28684"
+      "id": "6991fb58-f1a2-4d3e-9bda-c06626e23569"
     },
     {
       "parameters": {
@@ -95,7 +144,7 @@
         240,
         100
       ],
-      "id": "30fb993c-53ea-4ace-9f9e-dd5463a8aa62"
+      "id": "8da1fb1b-f94a-4291-af4a-ed930a4d769d"
     },
     {
       "parameters": {
@@ -117,7 +166,7 @@
         480,
         100
       ],
-      "id": "92667588-4827-4995-ad8e-fe2f79f7ca6d"
+      "id": "207cb556-86a8-47f2-8dc8-ef47f87f7a81"
     },
     {
       "parameters": {
@@ -133,7 +182,7 @@
         720,
         100
       ],
-      "id": "d436944b-ce02-4864-98dc-af2b9b82de19"
+      "id": "5225cfe1-37ab-4ceb-a3cb-7c753fefa32c"
     },
     {
       "parameters": {
@@ -146,7 +195,7 @@
         960,
         100
       ],
-      "id": "7cbd5922-ab9e-40e3-83e4-99ed24151117"
+      "id": "aafa81d4-daf8-45bf-80a3-afa3774148c7"
     },
     {
       "parameters": {
@@ -166,8 +215,8 @@
         1200,
         100
       ],
-      "id": "f26d6ab2-d194-4dce-b6ed-af00acac0190",
-      "webhookId": "b58b1489-e3eb-4928-994a-f10bbed74e2c"
+      "id": "9cf56922-6ba6-430e-9910-a33a796fcbd9",
+      "webhookId": "7e0d30b4-4e27-419d-980b-4e9e25dda8c9"
     }
   ],
   "connections": {

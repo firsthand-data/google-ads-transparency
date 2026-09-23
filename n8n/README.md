@@ -1,6 +1,6 @@
 # n8n template: weekly competitor Google Ads digest
 
-[Send a weekly digest of competitors' Google Ads to Slack.json](Send%20a%20weekly%20digest%20of%20competitors'%20Google%20Ads%20to%20Slack.json)
+[Send a weekly competitor Google Ads digest from Apify to Slack.json](Send%20a%20weekly%20competitor%20Google%20Ads%20digest%20from%20Apify%20to%20Slack.json)
 
 Every Monday the workflow reads your competitors' ads from the Google Ads Transparency Center and posts
 one message to Slack: ads running now, new and stopped ads for the week per competitor, which
@@ -35,8 +35,8 @@ Apify charges per result: about $0.0005 per ad row and $0.0035 per run on the fr
 
 ## Tested
 
-On a self-hosted n8n, 23.09.2026: live run on two competitors, 8 s without ad text and 119 s with it,
-all nodes succeeded.
+On a self-hosted n8n, 23.09.2026: live runs on two competitors, 8-10 s without ad text and 119 s with
+it, all nodes succeeded.
 
 `build_template.py` regenerates the workflow from code; the JSON here is the version exported back from
 n8n after the test.

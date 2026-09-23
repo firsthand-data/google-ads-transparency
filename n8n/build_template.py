@@ -44,18 +44,28 @@ for (const [target, rs] of Object.entries(byTarget)) {
 return [{ json: { text: lines.join('\n') } }];
 """.strip()
 
-NOTE = """## Weekly Google Ads competitor digest
+NOTE = """## Weekly competitor Google Ads digest
 
-Every Monday this workflow reads your competitors' ads from the Google Ads Transparency Center and posts a digest to Slack: ads running now, new and stopped ads for the week, and examples of the new ones.
+Every Monday, get one Slack message that tells you what your competitors changed in their Google Ads: how many ads each one runs, which ads are new this week, which were stopped, and examples of the new ones. Built for PPC managers, marketing teams and agencies who watch a set of competitors and don't want to check the Google Ads Transparency Center by hand.
 
-### Setup (5 minutes)
+### How it works
+1. A schedule (Monday 8:00) or a manual run starts the workflow.
+2. **Settings** holds your competitor domains, an optional country and the report period.
+3. An HTTP Request runs the Google Ads Transparency Report Actor on Apify. It reads each competitor's ads from the Google Ads Transparency Center and builds a new / stopped / running report.
+4. A second HTTP Request fetches that report, and a Code node turns it into one digest per competitor.
+5. The digest is posted to a Slack channel.
+
+### Setup (about 5 minutes)
 1. Create an Apify account and copy your API token (Console > Settings > Integrations).
-2. Create a **Header Auth** credential: name `Authorization`, value `Bearer YOUR_TOKEN`. Select it in both HTTP Request nodes.
-3. In **Settings**, list competitor domains (comma separated), optionally a two-letter country.
-4. Connect Slack and pick a channel in the last node.
+2. Add a **Header Auth** credential: name `Authorization`, value `Bearer <your token>`. Select it in both HTTP Request nodes.
+3. List your competitors in **Settings**.
+4. Connect Slack and choose a channel.
 
-### Cost
-Pay per result on Apify: about $0.0005 per ad row plus $0.0035 per run on the free plan. A weekly run on 3 competitors usually costs cents. Ad text is off by default to keep it cheap; turn on **fetchAdText** in Settings to get headlines (text for the 20 most recent ads per competitor, up to about $0.004 per ad).
+### Requirements
+An Apify account (pay per result: about $0.0005 per ad plus $0.0035 per run on the free plan, so a weekly run on three competitors costs a few cents) and Slack.
+
+### Customization
+Turn on `fetchAdText` for headlines of new ads (up to about $0.004 per ad), change `reportDays`, or replace Slack with Gmail, Telegram or Google Sheets: the digest is in `{{ $json.text }}`.
 
 Actor: https://apify.com/firsthand/google-ads-transparency-report"""
 
@@ -68,8 +78,17 @@ def node(name, type_, version, pos, params, **extra):
 def build(slack_disabled=False):
     auth = {"authentication": "genericCredentialType", "genericAuthType": "httpHeaderAuth"}
     nodes = [
-        node("Setup notes", "n8n-nodes-base.stickyNote", 1, [-520, -300],
-             {"content": NOTE, "height": 560, "width": 460}),
+        node("Overview", "n8n-nodes-base.stickyNote", 1, [-680, -360],
+             {"content": NOTE, "height": 900, "width": 560, "color": 1}),
+        node("Section: when and what", "n8n-nodes-base.stickyNote", 1, [-60, -140],
+             {"content": "## 1. When and what to watch\nWeekly schedule or a manual run; your competitors in Settings.",
+              "height": 460, "width": 420, "color": 7}),
+        node("Section: read ads", "n8n-nodes-base.stickyNote", 1, [400, -140],
+             {"content": "## 2. Read competitors' ads\nRun the Apify Actor, then fetch its weekly report.",
+              "height": 460, "width": 460, "color": 7}),
+        node("Section: digest", "n8n-nodes-base.stickyNote", 1, [880, -140],
+             {"content": "## 3. Build and send the digest\nOne Slack message, one line per competitor.",
+              "height": 460, "width": 460, "color": 7}),
         node("Every Monday 8:00", "n8n-nodes-base.scheduleTrigger", 1.2, [0, 0],
              {"rule": {"interval": [{"field": "weeks", "triggerAtDay": [1], "triggerAtHour": 8}]}}),
         node("Run now", "n8n-nodes-base.manualTrigger", 1, [0, 200], {}),
@@ -107,7 +126,7 @@ def build(slack_disabled=False):
     ]
     link = lambda to: {"main": [[{"node": to, "type": "main", "index": 0}]]}
     return {
-        "name": "Send a weekly digest of competitors' Google Ads to Slack",
+        "name": "Send a weekly competitor Google Ads digest from Apify to Slack",
         "nodes": nodes,
         "connections": {
             "Every Monday 8:00": link("Settings"),
