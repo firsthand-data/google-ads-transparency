@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "google-ads-transparency"
+version = "0.1.0"
+description = "Competitor ads from the Google Ads Transparency Center in Python: ads, landing URLs, UTM tags, ad copy (OCR), weekly new/stopped report."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "firsthand-data" }]
+keywords = ["google ads", "ads transparency", "ads transparency center", "competitor ads", "ad spy", "ppc", "scraper", "apify"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Internet :: WWW/HTTP",
+]
+dependencies = ["apify-client>=3,<4"]
+
+[project.urls]
+Homepage = "https://github.com/firsthand-data/google-ads-transparency"
+Actor = "https://apify.com/firsthand/google-ads-transparency-report"
+Issues = "https://github.com/firsthand-data/google-ads-transparency/issues"
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/google_ads_transparency"]
